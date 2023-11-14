@@ -329,7 +329,7 @@
             app:fabSize="normal"
             app:layout_anchor="@id/appbarLayout"
             app:layout_anchorGravity="bottom|end|right"
-            app:srcCompat="@drawable/ic_info" />
+            app:srcCompat="@drawable/ic_phone" />
 
     </androidx.coordinatorlayout.widget.CoordinatorLayout>
 </LinearLayout>

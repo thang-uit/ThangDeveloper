@@ -82,10 +82,11 @@ abstract class BaseActivity : AppCompatActivity() {
     }
 
     fun changeStatusBar(color: Int) {
-        val window = window
-        window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS)
-        window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS)
-        window.statusBarColor = color
+        window?.let {
+            it.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS)
+            it.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS)
+            it.statusBarColor = color
+        }
     }
 
     fun showBottomSheetDialog(title: String?, content: String?) {
