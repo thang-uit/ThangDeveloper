@@ -1,11 +1,13 @@
 package vn.thanguit.thangbeo.activity
 
 import android.Manifest
+import android.annotation.SuppressLint
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import android.text.TextUtils
 import android.text.method.ScrollingMovementMethod
+import android.util.Log
 import android.widget.Scroller
 import androidx.activity.result.ActivityResultCallback
 import androidx.activity.result.ActivityResultLauncher
@@ -93,9 +95,11 @@ class MainActivity : BaseActivity() {
                 0 -> {
                     changeColorStatusBar(true)
                 }
+
                 -appBarLayout.totalScrollRange -> {
                     changeColorStatusBar(false)
                 }
+
                 else -> {
                 }
             }
@@ -136,7 +140,7 @@ class MainActivity : BaseActivity() {
 
         binding.btnQRCode.setOnClickListener {
             if (isValidText()) {
-                showToast("Feature are developing")
+                showQRCodeDialog(getContent())
             }
         }
 
@@ -145,6 +149,7 @@ class MainActivity : BaseActivity() {
         }
     }
 
+    @SuppressLint("CheckResult")
     private fun handleScanQR() {
         TedPermission.create()
 //            .setRationaleTitle("Permission")
@@ -157,7 +162,10 @@ class MainActivity : BaseActivity() {
                 if (tedPermissionResult.isGranted) {
                     showQRCodeScreen()
                 } else {
-                    showToast("""Permission Denied${tedPermissionResult.deniedPermissions}""".trimIndent())
+                    Log.d(
+                        TAG,
+                        """Permission Denied${tedPermissionResult.deniedPermissions}""".trimIndent()
+                    )
                 }
             }) { throwable ->
                 throwable.printStackTrace()

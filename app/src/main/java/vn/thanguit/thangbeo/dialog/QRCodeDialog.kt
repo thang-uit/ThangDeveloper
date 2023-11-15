@@ -8,10 +8,11 @@ import android.os.Bundle
 import android.view.Window
 import android.view.WindowManager
 import vn.thanguit.thangbeo.databinding.DialogQrCodeBinding
+import vn.thanguit.thangbeo.utils.generateQRCode
 
 class QRCodeDialog(
     context: Context,
-    val qrCode: String?
+    private val qrCode: String?
 ) : Dialog(context) {
     private lateinit var binding: DialogQrCodeBinding
 
@@ -37,12 +38,22 @@ class QRCodeDialog(
 //            setBackgroundDrawableResource(R.color.transparent)
             setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
         }
+        setCancelable(true)
+        setCanceledOnTouchOutside(false)
     }
 
     private fun initView() {
-//        binding.ivQRCode.setImageBitmap()
+        val bitMap = generateQRCode(qrCode)
+        if (bitMap != null) {
+            binding.ivQRCode.setImageBitmap(bitMap)
+        }
     }
 
     private fun listener() {
+        binding.ivCancel.setOnClickListener {
+            dismiss()
+        }
+
+
     }
 }

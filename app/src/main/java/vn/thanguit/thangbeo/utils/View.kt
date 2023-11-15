@@ -1,6 +1,7 @@
 package vn.thanguit.thangbeo.utils
 
 import android.content.Context
+import android.graphics.Bitmap
 import android.graphics.drawable.ColorDrawable
 import android.graphics.drawable.Drawable
 import android.graphics.drawable.GradientDrawable
@@ -18,6 +19,10 @@ import androidx.annotation.LayoutRes
 import androidx.core.content.ContextCompat
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
+import com.google.zxing.BarcodeFormat
+import com.google.zxing.MultiFormatWriter
+import com.journeyapps.barcodescanner.BarcodeEncoder
+
 
 fun View.cancelTransition() {
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
@@ -105,4 +110,16 @@ fun View.startAnimShake() {
     shake.duration = 500
     shake.interpolator = CycleInterpolator(7F)
     return startAnimation(shake)
+}
+
+fun generateQRCode(data: String?, width: Int = 300, height: Int = 300): Bitmap? {
+    return try {
+        val multiFormatWriter = MultiFormatWriter()
+        val bitMatrix = multiFormatWriter.encode(data, BarcodeFormat.QR_CODE, width, height)
+        val barcodeEncoder = BarcodeEncoder()
+        barcodeEncoder.createBitmap(bitMatrix)
+    } catch (e: Exception) {
+        e.printStackTrace()
+        null
+    }
 }

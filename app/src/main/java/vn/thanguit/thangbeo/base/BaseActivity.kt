@@ -14,11 +14,13 @@ import android.widget.EditText
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import vn.thanguit.thangbeo.dialog.DeviceInfoBottomSheetDialog
+import vn.thanguit.thangbeo.dialog.QRCodeDialog
 
 
 abstract class BaseActivity : AppCompatActivity() {
 
     private var deviceInfoBottomSheetDialog: DeviceInfoBottomSheetDialog? = null
+    private var qrCodeDialog: QRCodeDialog? = null
 
     // ---------------------------------------------------------------------------------------------
 
@@ -29,6 +31,7 @@ abstract class BaseActivity : AppCompatActivity() {
 
     override fun onDestroy() {
         deviceInfoBottomSheetDialog?.dismiss()
+        qrCodeDialog?.dismiss()
 
         super.onDestroy()
     }
@@ -98,6 +101,18 @@ abstract class BaseActivity : AppCompatActivity() {
         }
         if (!isFinishing && !isDestroyed) {
             deviceInfoBottomSheetDialog?.show()
+        }
+    }
+
+    fun showQRCodeDialog(qrCode: String?) {
+        qrCodeDialog?.dismiss()
+
+        qrCodeDialog = QRCodeDialog(this, qrCode)
+        qrCodeDialog?.setOnCancelListener {
+            qrCodeDialog = null
+        }
+        if (!isFinishing && !isDestroyed) {
+            qrCodeDialog?.show()
         }
     }
 }
