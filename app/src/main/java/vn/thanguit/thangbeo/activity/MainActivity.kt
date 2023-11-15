@@ -1,12 +1,19 @@
 package vn.thanguit.thangbeo.activity
 
+import android.Manifest
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import android.text.TextUtils
 import android.text.method.ScrollingMovementMethod
 import android.widget.Scroller
+import androidx.activity.result.ActivityResultCallback
+import androidx.activity.result.ActivityResultLauncher
 import androidx.core.content.ContextCompat
+import com.gun0912.tedpermission.rx3.TedPermission
+import com.journeyapps.barcodescanner.ScanContract
+import com.journeyapps.barcodescanner.ScanIntentResult
+import com.journeyapps.barcodescanner.ScanOptions
 import vn.thanguit.thangbeo.R
 import vn.thanguit.thangbeo.base.BaseActivity
 import vn.thanguit.thangbeo.databinding.ActivityMainBinding
@@ -21,6 +28,16 @@ class MainActivity : BaseActivity() {
     // ---------------------------------------------------------------------------------------------
 
     private lateinit var binding: ActivityMainBinding
+
+    private var qrCodeLauncher: ActivityResultLauncher<ScanOptions> = registerForActivityResult(
+        ScanContract(),
+        object : ActivityResultCallback<ScanIntentResult> {
+            override fun onActivityResult(result: ScanIntentResult) {
+                if (result != null) {
+                    setContent(result.contents)
+                }
+            }
+        })
 
     // ---------------------------------------------------------------------------------------------
 
@@ -40,7 +57,7 @@ class MainActivity : BaseActivity() {
     private fun handleTextFromAnotherApp() {
         val receivedIntent = intent
         if ("text/plain" == receivedIntent?.type) {
-            binding.edtContent.setText(
+            setContent(
                 receivedIntent.getStringExtra(Intent.EXTRA_TEXT) ?: ""
             )
         }
@@ -122,6 +139,42 @@ class MainActivity : BaseActivity() {
                 showToast("Feature are developing")
             }
         }
+
+        binding.btnScanQR.setOnClickListener {
+            handleScanQR()
+        }
+    }
+
+    private fun handleScanQR() {
+        TedPermission.create()
+//            .setRationaleTitle("Permission")
+//            .setRationaleMessage("We need permission for use your Camera")
+            .setPermissions(
+                Manifest.permission.CAMERA
+            )
+            .request()
+            .subscribe({ tedPermissionResult ->
+                if (tedPermissionResult.isGranted) {
+                    showQRCodeScreen()
+                } else {
+                    showToast("""Permission Denied${tedPermissionResult.deniedPermissions}""".trimIndent())
+                }
+            }) { throwable ->
+                throwable.printStackTrace()
+            }
+    }
+
+    private fun showQRCodeScreen() {
+        val scanOptions = ScanOptions()
+        scanOptions.let {
+            it.setDesiredBarcodeFormats(ScanOptions.QR_CODE)
+            it.setPrompt("Scan QR")
+            it.setCameraId(0)
+            it.setBeepEnabled(false)
+            it.setBarcodeImageEnabled(true)
+            it.setOrientationLocked(false)
+        }
+        qrCodeLauncher.launch(scanOptions)
     }
 
     private fun handleConfirm() {
@@ -135,6 +188,10 @@ class MainActivity : BaseActivity() {
 
     private fun getContent(): String {
         return binding.edtContent.text.toString().trim()
+    }
+
+    private fun setContent(content: String?) {
+        binding.edtContent.setText(content ?: "")
     }
 
     private fun isValidText(): Boolean {
