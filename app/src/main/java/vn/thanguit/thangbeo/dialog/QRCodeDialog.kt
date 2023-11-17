@@ -1,19 +1,21 @@
 package vn.thanguit.thangbeo.dialog
 
 import android.app.Dialog
-import android.content.Context
+import android.graphics.Bitmap
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import android.view.Window
 import android.view.WindowManager
+import vn.thanguit.thangbeo.base.BaseActivity
 import vn.thanguit.thangbeo.databinding.DialogQrCodeBinding
 import vn.thanguit.thangbeo.utils.generateQRCode
 
 class QRCodeDialog(
-    context: Context,
+    private var activity: BaseActivity,
     private val qrCode: String?
-) : Dialog(context) {
+) : Dialog(activity) {
+    private var bitMap: Bitmap? = null
     private lateinit var binding: DialogQrCodeBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -43,7 +45,7 @@ class QRCodeDialog(
     }
 
     private fun initView() {
-        val bitMap = generateQRCode(qrCode)
+        bitMap = generateQRCode(qrCode)
         if (bitMap != null) {
             binding.ivQRCode.setImageBitmap(bitMap)
         }
@@ -54,6 +56,10 @@ class QRCodeDialog(
             dismiss()
         }
 
-
+        binding.ivShare.setOnClickListener {
+            if (activity != null && bitMap != null) {
+                activity.shareImageBitmap(bitMap)
+            }
+        }
     }
 }

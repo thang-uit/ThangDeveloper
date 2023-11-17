@@ -2,7 +2,9 @@ package vn.thanguit.thangbeo.activity
 
 import android.Manifest
 import android.annotation.SuppressLint
+import android.content.Context
 import android.content.Intent
+import android.content.IntentFilter
 import android.net.Uri
 import android.os.Bundle
 import android.text.TextUtils
@@ -18,6 +20,7 @@ import com.journeyapps.barcodescanner.ScanIntentResult
 import com.journeyapps.barcodescanner.ScanOptions
 import vn.thanguit.thangbeo.R
 import vn.thanguit.thangbeo.base.BaseActivity
+import vn.thanguit.thangbeo.broadcast.TestBroadCast
 import vn.thanguit.thangbeo.databinding.ActivityMainBinding
 import vn.thanguit.thangbeo.utils.DeviceUtils
 
@@ -41,6 +44,7 @@ class MainActivity : BaseActivity() {
             }
         })
 
+    private var testBroadCast: TestBroadCast? = null
     // ---------------------------------------------------------------------------------------------
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -54,15 +58,15 @@ class MainActivity : BaseActivity() {
         listener()
 
         handleTextFromAnotherApp()
-    }
 
-    private fun handleTextFromAnotherApp() {
-        val receivedIntent = intent
-        if ("text/plain" == receivedIntent?.type) {
-            setContent(
-                receivedIntent.getStringExtra(Intent.EXTRA_TEXT) ?: ""
-            )
-        }
+        val intentFilter = IntentFilter("test.Broadcast")
+        testBroadCast = TestBroadCast(object : TestBroadCast.IActionTestBroadCast {
+            override fun onReceiveTestBroadCast(context: Context?, intent: Intent?) {
+                showSnackBar(binding.layoutRoot ,intent?.getStringExtra(TestBroadCastActivity.TAG) ?: TAG)
+                setContent(intent?.getStringExtra(TestBroadCastActivity.TAG) ?: "Bruh")
+            }
+        })
+        registerReceiver(testBroadCast, intentFilter)
     }
 
     override fun onResume() {
@@ -70,6 +74,9 @@ class MainActivity : BaseActivity() {
     }
 
     override fun onDestroy() {
+        testBroadCast?.let {
+            unregisterReceiver(it)
+        }
         super.onDestroy()
     }
 
@@ -147,6 +154,19 @@ class MainActivity : BaseActivity() {
         binding.btnScanQR.setOnClickListener {
             handleScanQR()
         }
+
+        binding.btnTestBroad.setOnClickListener {
+            goDeeplink("deeplink1.app://deeplink1.com?test=2")
+        }
+    }
+
+    private fun handleTextFromAnotherApp() {
+        val receivedIntent = intent
+        if ("text/plain" == receivedIntent?.type) {
+            setContent(
+                receivedIntent.getStringExtra(Intent.EXTRA_TEXT) ?: ""
+            )
+        }
     }
 
     @SuppressLint("CheckResult")
@@ -186,12 +206,7 @@ class MainActivity : BaseActivity() {
     }
 
     private fun handleConfirm() {
-        try {
-            startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(getContent())))
-        } catch (e: Exception) {
-            showToast(e.message)
-            e.printStackTrace()
-        }
+        goDeeplink(getContent())
     }
 
     private fun getContent(): String {
