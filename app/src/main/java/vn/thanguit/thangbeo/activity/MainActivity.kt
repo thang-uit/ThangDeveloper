@@ -66,7 +66,12 @@ class MainActivity : BaseActivity() {
                 setContent(intent?.getStringExtra(TestBroadCastActivity.TAG) ?: "Bruh")
             }
         })
-        registerReceiver(testBroadCast, intentFilter)
+        ContextCompat.registerReceiver(
+            this,
+            testBroadCast,
+            intentFilter,
+            ContextCompat.RECEIVER_EXPORTED
+        )
     }
 
     override fun onResume() {
