@@ -62,7 +62,10 @@ class MainActivity : BaseActivity() {
         val intentFilter = IntentFilter("test.Broadcast")
         testBroadCast = TestBroadCast(object : TestBroadCast.IActionTestBroadCast {
             override fun onReceiveTestBroadCast(context: Context?, intent: Intent?) {
-                showSnackBar(binding.layoutRoot ,intent?.getStringExtra(TestBroadCastActivity.TAG) ?: TAG)
+                showSnackBar(
+                    binding.layoutRoot,
+                    intent?.getStringExtra(TestBroadCastActivity.TAG) ?: TAG
+                )
                 setContent(intent?.getStringExtra(TestBroadCastActivity.TAG) ?: "Bruh")
             }
         })
@@ -162,6 +165,10 @@ class MainActivity : BaseActivity() {
 
         binding.btnTestBroad.setOnClickListener {
             goDeeplink("deeplink1.app://deeplink1.com?test=2")
+        }
+
+        binding.btnMap.setOnClickListener {
+            launchActivity(MapActivity::class.java)
         }
     }
 
