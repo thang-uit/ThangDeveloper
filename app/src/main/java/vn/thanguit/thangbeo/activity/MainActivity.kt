@@ -168,7 +168,8 @@ class MainActivity : BaseActivity() {
         }
 
         binding.btnMap.setOnClickListener {
-            launchActivity(MapActivity::class.java)
+//            launchActivity(MapActivity::class.java)
+            launchActivity(MapAlarmActivity::class.java)
         }
     }
 

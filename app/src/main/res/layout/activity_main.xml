@@ -348,7 +348,7 @@
                         android:focusable="true"
                         android:foreground="?attr/selectableItemBackground"
                         android:padding="14dp"
-                        android:text="View Map"
+                        android:text="View Map Alarm"
                         android:textAlignment="center"
                         android:textAllCaps="false"
                         android:textColor="@color/white"

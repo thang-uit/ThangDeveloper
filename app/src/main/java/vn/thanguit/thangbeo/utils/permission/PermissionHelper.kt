@@ -58,6 +58,13 @@ object PermissionHelper {
         return arrayOf(Manifest.permission.ACCESS_FINE_LOCATION)
     }
 
+    fun getPermissionLocationFull(): Array<String> {
+        return arrayOf(
+            Manifest.permission.ACCESS_FINE_LOCATION,
+            Manifest.permission.ACCESS_COARSE_LOCATION
+        )
+    }
+
     fun getPermissionContact(): Array<String> {
         return arrayOf(
             Manifest.permission.READ_CONTACTS,

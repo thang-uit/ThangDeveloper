@@ -123,3 +123,14 @@ fun generateQRCode(data: String?, width: Int = 300, height: Int = 300): Bitmap? 
         null
     }
 }
+
+fun View.adaptViewForInserts() {
+    val originalTopPadding = this.paddingTop
+    Log.d("adaptViewForInserts", "originalTopPadding: $originalTopPadding")
+    this.setOnApplyWindowInsetsListener { _, windowInsets -> // Update view's top padding to accommodate system window top inset
+        val systemTopPadding = windowInsets.systemWindowInsetTop + originalTopPadding
+        Log.d("adaptViewForInserts", "onApplyWindowInsets: $systemTopPadding")
+        this.setPadding(0, systemTopPadding, 0, 0)
+        windowInsets
+    }
+}

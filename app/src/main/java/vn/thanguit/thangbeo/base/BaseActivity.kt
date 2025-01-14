@@ -6,7 +6,9 @@ import android.content.ClipboardManager
 import android.content.Context
 import android.content.Intent
 import android.graphics.Bitmap
+import android.graphics.Color
 import android.net.Uri
+import android.os.Build
 import android.os.Bundle
 import android.provider.MediaStore
 import android.text.TextUtils
@@ -16,6 +18,7 @@ import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.view.WindowInsetsControllerCompat
 import com.google.android.material.snackbar.Snackbar
 import vn.thanguit.thangbeo.dialog.DeviceInfoBottomSheetDialog
 import vn.thanguit.thangbeo.dialog.QRCodeDialog
@@ -143,6 +146,35 @@ abstract class BaseActivity : AppCompatActivity() {
             it.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS)
             it.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS)
             it.statusBarColor = color
+        }
+    }
+
+    fun setStatusBarTransparent() {
+        window?.let {
+            it.decorView.systemUiVisibility = (
+                    View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+                            or View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
+                    )
+            it.statusBarColor = Color.TRANSPARENT
+        }
+    }
+
+    fun setStatusBarTextColor(isDarkText: Boolean = false, isTransparent: Boolean = false) {
+        window?.let {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+                val controller = WindowInsetsControllerCompat(it, it.decorView)
+                controller.isAppearanceLightStatusBars = isDarkText
+            } else {
+                it.decorView.systemUiVisibility = if (isDarkText) {
+                    it.decorView.systemUiVisibility or View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR
+                } else {
+                    it.decorView.systemUiVisibility and View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR.inv()
+                }
+            }
+
+            if (isTransparent) {
+                setStatusBarTransparent()
+            }
         }
     }
 
